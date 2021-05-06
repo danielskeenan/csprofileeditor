@@ -37,6 +37,27 @@ void to_json(nlohmann::json &json, const Range &range) {
   }
 }
 
+Range::InvalidReason Range::IsInvalid() const {
+  if (label_.empty()) {
+    return InvalidReason::kMissingLabel;
+  } else if (end_value_ < begin_value_) {
+    return InvalidReason::kEndBeforeBegin;
+  } else if (default_value_ < begin_value_ || default_value_ > end_value_) {
+    return InvalidReason::kDefaultOutOfRange;
+  } else if (begin_value_ > 65535 || end_value_ > 65535 || default_value_ > 65535) {
+    return InvalidReason::kOutOfDmxRange;
+  }
+  return InvalidReason::kIsValid;
+}
+
+bool Range::Is16Bit() const {
+  return begin_value_ > 512 || end_value_ > 512 || default_value_ > 512;
+}
+
+bool Range::Is8Bit() const {
+  return !Is16Bit();
+}
+
 bool Range::operator==(const Range &rhs) const {
   return begin_value_ == rhs.begin_value_ &&
       end_value_ == rhs.end_value_ &&

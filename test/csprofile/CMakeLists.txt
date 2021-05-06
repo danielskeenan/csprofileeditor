@@ -1,5 +1,6 @@
 add_executable(csprofile_test
     LibraryTest.cpp
+    RangeTest.cpp
     )
 target_link_libraries(csprofile_test PRIVATE csprofile GTest::gtest_main)
 include(GoogleTest)

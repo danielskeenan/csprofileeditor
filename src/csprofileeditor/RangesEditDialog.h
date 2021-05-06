@@ -13,6 +13,8 @@
 #include <csprofile/parameter/Parameter.h>
 #include <QTableView>
 #include <QStyledItemDelegate>
+#include <QLabel>
+#include <QDialogButtonBox>
 #include "RangesTableModel.h"
 #include "MediaSelectorDialog.h"
 
@@ -39,6 +41,8 @@ class RangesEditDialog : public QDialog {
   Actions actions_;
   struct Widgets {
     QTableView *range_table = nullptr;
+    QLabel* errors_label = nullptr;
+    QDialogButtonBox* dialog_actions = nullptr;
   };
   Widgets widgets_;
   std::unique_ptr<csprofile::parameter::Parameter> parameter_;
@@ -65,6 +69,7 @@ class RangesEditDialog : public QDialog {
   void SRemoveRange();
 
   void SSelectedTableRowChanged() const;
+  void SDataChanged();
 };
 
 } // csprofileeditor

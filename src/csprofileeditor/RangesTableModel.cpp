@@ -11,6 +11,8 @@
 #include "EtcCsPersEditBridge.h"
 #include "util.h"
 #include <QIcon>
+#include "Settings.h"
+#include <QBrush>
 
 namespace csprofileeditor {
 
@@ -78,6 +80,21 @@ QVariant RangesTableModel::data(const QModelIndex &index, int role) const {
           return QColor(color.value());
         } else if (gobo_dcid.has_value() && dcid_images_.find(*gobo_dcid) != dcid_images_.end()) {
           return dcid_images_.at(*gobo_dcid);
+        }
+      }
+    }
+  } else if (role == Qt::ForegroundRole || role == Qt::ToolTipRole) {
+    const auto invalid_reason = range.IsInvalid();
+    if (invalid_reason != csprofile::parameter::Range::InvalidReason::kIsValid) {
+      if (role == Qt::ForegroundRole) {
+        return QBrush(Settings::GetErrorColor());
+      } else {
+        switch (invalid_reason) {
+          case csprofile::parameter::Range::InvalidReason::kEndBeforeBegin:return tr("Range ends before it begins.");
+          case csprofile::parameter::Range::InvalidReason::kDefaultOutOfRange:return tr("Default is not inside range.");
+          case csprofile::parameter::Range::InvalidReason::kOutOfDmxRange:return tr("Value is not acceptable DMX.");
+          case csprofile::parameter::Range::InvalidReason::kMissingLabel:return tr("Missing label.");
+          case csprofile::parameter::Range::InvalidReason::kIsValid:break;
         }
       }
     }

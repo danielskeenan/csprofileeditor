@@ -22,10 +22,26 @@ class Range final {
   friend void to_json(nlohmann::json &json, const Range &range);
 
  public:
+  enum class InvalidReason {
+    kIsValid = 0,
+    /** Empty label. */
+    kMissingLabel,
+    /** The range end occurs before the beginning. */
+    kEndBeforeBegin,
+    /** The default value is not between the beginning and end. */
+    kDefaultOutOfRange,
+    /** A value is outside the valid range of DMX (allows 16-bit). */
+    kOutOfDmxRange,
+  };
+
   explicit Range() = default;
 
   explicit Range(unsigned int begin_value, unsigned int end_value, unsigned int default_value) :
       begin_value_(begin_value), end_value_(end_value), default_value_(default_value) {}
+
+  [[nodiscard]] InvalidReason IsInvalid() const;
+  [[nodiscard]] bool Is16Bit() const;
+  [[nodiscard]] bool Is8Bit() const;
 
   [[nodiscard]] unsigned int GetBeginValue() const {
     return begin_value_;

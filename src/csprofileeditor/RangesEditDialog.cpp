@@ -10,12 +10,12 @@
 #include "MediaSelectorDialog.h"
 #include <QAction>
 #include <QVBoxLayout>
-#include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QMenu>
 #include "EtcCsPersEditBridge.h"
 #include "PushButtonItemDelegate.h"
+#include "Settings.h"
 
 namespace csprofileeditor {
 
@@ -56,13 +56,26 @@ void RangesEditDialog::InitUi() {
           &QItemSelectionModel::selectionChanged,
           this,
           &RangesEditDialog::SSelectedTableRowChanged);
+  connect(ranges_table_model_, &RangesTableModel::dataChanged, this, &RangesEditDialog::SDataChanged);
+  connect(ranges_table_model_, &RangesTableModel::rowsInserted, this, &RangesEditDialog::SDataChanged);
+  connect(ranges_table_model_, &RangesTableModel::rowsRemoved, this, &RangesEditDialog::SDataChanged);
   layout->addWidget(widgets_.range_table);
 
+  // Errors
+  auto *actions_layout = new QHBoxLayout;
+  layout->addLayout(actions_layout);
+  widgets_.errors_label = new QLabel(this);
+  widgets_.errors_label->setPalette(Settings::GetErrorPalette());
+  actions_layout->addWidget(widgets_.errors_label);
+
   // Actions
-  auto *actions = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  layout->addWidget(actions);
-  connect(actions, &QDialogButtonBox::accepted, this, &RangesEditDialog::accept);
-  connect(actions, &QDialogButtonBox::rejected, this, &RangesEditDialog::reject);
+  widgets_.dialog_actions = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  actions_layout->addWidget(widgets_.dialog_actions);
+  connect(widgets_.dialog_actions, &QDialogButtonBox::accepted, this, &RangesEditDialog::accept);
+  connect(widgets_.dialog_actions, &QDialogButtonBox::rejected, this, &RangesEditDialog::reject);
+
+  // Show errors if they already exist.
+  SDataChanged();
 }
 
 bool RangesEditDialog::RangeActionsAllowed() const {
@@ -108,6 +121,34 @@ void RangesEditDialog::SRemoveRange() {
 void RangesEditDialog::SSelectedTableRowChanged() const {
   const bool range_actions_allowed = RangeActionsAllowed();
   actions_.act_range_remove->setEnabled(range_actions_allowed);
+}
+
+void RangesEditDialog::SDataChanged() {
+  const bool is_16bit = parameter_->Is16Bit();
+  bool allow_save = true;
+  std::unordered_set<std::string> names;
+  for (const auto &range : parameter_->ranges_) {
+    if (range.IsInvalid() != csprofile::parameter::Range::InvalidReason::kIsValid) {
+      widgets_.errors_label->setText(tr("Fix errors before saving."));
+      allow_save = false;
+      break;
+    } else if (!is_16bit && range.Is16Bit()) {
+      widgets_.errors_label->setText(tr("Range does not fit in an 8-bit parameter."));
+      allow_save = false;
+      break;
+    } else if (names.find(range.GetLabel()) != names.end()) {
+      widgets_.errors_label->setText(tr("More than one range is called \"%1\"")
+                                         .arg(QString::fromStdString(range.GetLabel())));
+      allow_save = false;
+      break;
+    }
+    names.insert(range.GetLabel());
+  }
+  if (allow_save) {
+    widgets_.errors_label->clear();
+  }
+
+  widgets_.dialog_actions->button(QDialogButtonBox::Ok)->setEnabled(allow_save);
 }
 
 QPushButton *RangesEditDialog::CreateRangeMediaButton() {

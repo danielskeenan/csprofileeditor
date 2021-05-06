@@ -12,6 +12,8 @@
 #include <dragoonboots/qsettingscontainer/QSettingsContainer.h>
 #include <QString>
 #include <QStandardPaths>
+#include <QColor>
+#include <QPalette>
 
 namespace csprofileeditor {
 
@@ -34,6 +36,20 @@ class Settings : public dragoonboots::qsettingscontainer::QSettingsContainer {
 
   /** Path to official ETC CS Personality Editor */
   DGSETTINGS_SETTING(QString, EtcCsPersEditorPath, {})
+
+  /** How errors are formatted */
+  DGSETTINGS_SETTING(QColor, ErrorColor, QColor(Qt::GlobalColor::red))
+
+  static QPalette GetErrorPalette() {
+    QPalette palette;
+    const auto error_color = GetErrorColor();
+    palette.setColor(QPalette::Text, error_color);
+    palette.setColor(QPalette::WindowText, error_color);
+    palette.setColor(QPalette::ToolTipText, error_color);
+    palette.setColor(QPalette::ButtonText, error_color);
+
+    return palette;
+  }
 };
 
 } // csprofileeditor

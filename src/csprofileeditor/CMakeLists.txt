@@ -21,10 +21,8 @@ add_executable(${PROJECT_NAME}
     )
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DQT_NO_KEYWORDS)
 
-if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    find_package(BreezeIcons REQUIRED)
-    target_sources(${PROJECT_NAME} PRIVATE ${BreezeIcons_RES_DIRS}/breeze-icons.qrc)
-endif ()
+find_package(BreezeIcons REQUIRED)
+target_sources(${PROJECT_NAME} PRIVATE ${BreezeIcons_RES_DIRS}/breeze-icons.qrc)
 
 find_package(QSettingsContainer REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE
