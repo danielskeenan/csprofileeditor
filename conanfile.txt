@@ -1,0 +1,16 @@
+[requires]
+QSettingsContainer/[~=1.0]@dragoonboots/stable
+boost/[~=1.75.0]
+fmt/[~=7.1.3]
+gtest/[~=1.10.0]
+nlohmann_json/[~=3.9.1]
+qt-breeze-icons/[~=5.54]@dragoonboots/stable
+spdlog/[~=1.8.5]
+sqlitecpp/[~=3.1.1]
+stduuid/[~=1.0]
+
+[generators]
+cmake_find_package
+
+[options]
+qt-breeze-icons:pattern=application-exit|document-(new|open|save|save-as|export|edit)|configure|list-(add|remove)|edit-(select-all|select-none)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>${PROJECT_AUTHOR_DOMAIN}.${PROJECT_NAME}</string>
+	<key>CFBundleDisplayName</key>
+	<string>${CPACK_BUNDLE_NAME}</string>
+	<key>CFBundleVersion</key>
+	<string>${CMAKE_PROJECT_VERSION}</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${CMAKE_PROJECT_VERSION}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>CSPE</string>
+	<key>CFBundleExecutable</key>
+	<string>${CPACK_BUNDLE_NAME}</string>
+</dict>
+</plist>

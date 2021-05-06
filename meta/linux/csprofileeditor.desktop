@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=${PROJECT_DISPLAY_NAME}
+Version=${PROJECT_VERSION}
+Categories=Office
+Exec=csprofileeditor
+Icon=csprofileeditor
+StartupNotify=true
+Terminal=false
