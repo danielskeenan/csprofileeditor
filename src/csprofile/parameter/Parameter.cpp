@@ -32,8 +32,7 @@ std::unique_ptr<Parameter> Parameter::Clone() {
     case Type::kBeam:return std::make_unique<BeamParameter>(*dynamic_cast<BeamParameter *>(this));
     case Type::kColor:return std::make_unique<ColorParameter>(*dynamic_cast<ColorParameter *>(this));
   }
-  logging::critical("Tried to clone invalid parameter type {}", this->GetType());
-  assert(false);
+  throw std::logic_error("Tried to clone invalid parameter type");
 }
 
 std::unique_ptr<Parameter> Parameter::ConvertTo(Type type_id) {

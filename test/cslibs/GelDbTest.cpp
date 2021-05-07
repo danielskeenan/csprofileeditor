@@ -72,7 +72,7 @@ ENDDATA
   }
 
   gel::GelDb CreateDb(bool allow_writing = false) {
-    return gel::GelDb(defs_file_path_, db_path_, allow_writing);
+    return gel::GelDb(defs_file_path_.string(), db_path_.string(), allow_writing);
   }
 };
 

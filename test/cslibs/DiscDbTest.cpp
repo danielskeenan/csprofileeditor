@@ -451,7 +451,7 @@ ENDDATA
   }
 
   disc::DiscDb CreateDb(bool allow_writing = false) {
-    return disc::DiscDb(defs_file_path_, data_index_path_, data_path_, db_path_, allow_writing);
+    return disc::DiscDb(defs_file_path_.string(), data_index_path_.string(), data_path_.string(), db_path_.string(), allow_writing);
   }
 };
 

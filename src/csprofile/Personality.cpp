@@ -11,6 +11,7 @@
 #include "csprofile/logging.h"
 #include "csprofile/parameter/Parameter.h"
 #include <boost/algorithm/string/case_conv.hpp>
+#include <algorithm>
 
 using boost::algorithm::to_upper;
 
@@ -76,7 +77,7 @@ unsigned int Personality::GetFootprint() const {
   return max_address - min_address + 1;
 }
 
-Personality::Personality() : dcid_(uuids::uuid_system_generator{}()) {
+Personality::Personality() : dcid_(uuids::uuid_random_generator{}()) {
 }
 
 Personality::Personality(const std::string &dcid) : dcid_(uuids::uuid::from_string(dcid)) {

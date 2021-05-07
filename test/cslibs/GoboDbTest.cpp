@@ -745,7 +745,7 @@ D40A4E71-8CB1-9A48-9D36-793290AFD829,5730,gobo,059900CS-0005.png
   }
 
   gobo::GoboDb CreateDb(bool allow_writing = false) {
-    return gobo::GoboDb(defs_file_path_, data_index_path_, data_path_, db_path_, allow_writing);
+    return gobo::GoboDb(defs_file_path_.string(), data_index_path_.string(), data_path_.string(), db_path_.string(), allow_writing);
   }
 };
 

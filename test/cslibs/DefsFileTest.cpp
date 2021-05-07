@@ -68,7 +68,7 @@ ENDDATA
 };
 
 TEST_F(DefsFileTest, TestLoad) {
-  DefsFile defs_file(data_file_path_);
+  DefsFile defs_file(data_file_path_.string());
   const DefsFile::Version expected_version(12, 1, 0);
   EXPECT_EQ(expected_version, defs_file.GetVersion());
 
