@@ -328,6 +328,16 @@ void MainWindow::SFileSaveAs() {
 }
 
 void MainWindow::SFileExport() {
+  for (const auto &personality : library_->personalities) {
+    if (personality.IsInvalid() != csprofile::Personality::InvalidReason::kIsValid) {
+      QMessageBox::warning(this, tr("A personality is invalid"),
+                           tr("%1 %2 (%3) is invalid.  Problems must be corrected before exporting.")
+                               .arg(QString::fromStdString(personality.GetManufacturerName()),
+                                    QString::fromStdString(personality.GetModelName()),
+                                    QString::fromStdString(personality.GetModeName())));
+      return;
+    }
+  }
   auto *dialog = new ExportDialog(library_, this);
   dialog->exec();
 }
