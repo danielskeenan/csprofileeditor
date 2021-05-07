@@ -26,6 +26,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 endif ()
 
 add_subdirectory(src)
+add_subdirectory(resources)
 
 if (BUILD_TESTING)
     enable_testing()

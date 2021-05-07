@@ -43,6 +43,10 @@ class MainWindow : public QMainWindow {
     QAction *act_delete_personality = nullptr;
     QAction *act_add_personality = nullptr;
     QAction *act_settings = nullptr;
+
+    // Help
+    QAction* act_help_about = nullptr;
+    QAction* act_help_about_qt = nullptr;
   };
   Actions actions_;
   struct Widgets {
@@ -85,6 +89,8 @@ class MainWindow : public QMainWindow {
   void SDeletePersonality();
   void SAddPersonality();
   void SSettings();
+  void SAbout();
+  void SAboutQt();
 
   void SPersonalityChanged();
   void SSelectedTableRowChanged() const;

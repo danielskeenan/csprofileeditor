@@ -12,6 +12,12 @@ int main(int argc, char *argv[]) {
   app.setApplicationName(csprofileeditor::config::kProjectName);
   app.setApplicationDisplayName(csprofileeditor::config::kProjectDisplayName);
   app.setApplicationVersion(csprofileeditor::config::kProjectVersion);
+  app.setWindowIcon(QIcon(":/app-icon"));
+
+  // Icon theme, for non Linux platforms
+#ifndef PLATFORM_LINUX
+  QIcon::setThemeName("breeze-light");
+#endif
 
   csprofile::logging::init_logging(spdlog::level::info);
 

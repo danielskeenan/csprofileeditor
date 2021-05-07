@@ -21,6 +21,7 @@
 #include "PersonalityEditDialog.h"
 #include "ExportDialog.h"
 #include "CsLibUpdater.h"
+#include "AboutDialog.h"
 #include <csprofile/logging.h>
 
 namespace csprofileeditor {
@@ -104,6 +105,14 @@ void MainWindow::InitActions() {
   actions_.act_quit = new QAction(QIcon::fromTheme("application-exit"), tr("&Quit"), this);
   actions_.act_quit->setShortcut(QKeySequence::Quit);
   connect(actions_.act_quit, &QAction::triggered, this, &MainWindow::close);
+
+  // About
+  actions_.act_help_about = new QAction(tr("&About"), this);
+  connect(actions_.act_help_about, &QAction::triggered, this, &MainWindow::SAbout);
+
+  // About Qt
+  actions_.act_help_about_qt = new QAction(tr("About &Qt"), this);
+  connect(actions_.act_help_about_qt, &QAction::triggered, this, &MainWindow::SAboutQt);
 }
 
 void MainWindow::InitMenu() {
@@ -127,6 +136,11 @@ void MainWindow::InitMenu() {
   menu_edit->addAction(actions_.act_add_personality);
   menu_edit->addSeparator();
   menu_edit->addAction(actions_.act_settings);
+
+  // Help
+  QMenu *menu_help = menuBar()->addMenu(tr("&Help"));
+  menu_help->addAction(actions_.act_help_about);
+  menu_help->addAction(actions_.act_help_about_qt);
 }
 
 void MainWindow::InitToolbar() {
@@ -408,6 +422,15 @@ void MainWindow::SAddPersonality() {
 void MainWindow::SSettings() {
   auto settings_dialog = new SettingsDialog(this);
   settings_dialog->exec();
+}
+
+void MainWindow::SAbout() {
+  auto *about_dialog = new AboutDialog(this);
+  about_dialog->exec();
+}
+
+void MainWindow::SAboutQt() {
+  QMessageBox::aboutQt(this);
 }
 
 void MainWindow::SPersonalityChanged() {
