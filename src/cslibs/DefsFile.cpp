@@ -11,9 +11,11 @@
 #include <regex>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 using boost::algorithm::split;
 using boost::algorithm::is_any_of;
+using boost::algorithm::trim_right;
 
 namespace cslibs {
 
@@ -185,6 +187,7 @@ void ImageDefsFile::LoadOffsetsForType(const std::string &type) {
   unsigned int offset = 0;
   std::vector<std::string> parts;
   while (std::getline(data_index_stream_, line)) {
+    trim_right(line);
     if (line.empty()) {
       continue;
     }
