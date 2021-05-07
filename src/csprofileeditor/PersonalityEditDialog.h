@@ -12,6 +12,8 @@
 #include <QDialog>
 #include <csprofile/Personality.h>
 #include <QTableView>
+#include <QLabel>
+#include <QDialogButtonBox>
 #include "ParameterTableModel.h"
 
 namespace csprofileeditor {
@@ -37,6 +39,8 @@ class PersonalityEditDialog : public QDialog {
   Actions actions_;
   struct Widgets {
     QTableView *parameter_table = nullptr;
+    QLabel *errors_label = nullptr;
+    QDialogButtonBox *dialog_actions = nullptr;
   };
   Widgets widgets_;
 
@@ -55,6 +59,7 @@ class PersonalityEditDialog : public QDialog {
   void SEditRanges();
 
   void SSelectedTableRowChanged() const;
+  void SDataChanged();
 };
 
 } // csprofileeditor

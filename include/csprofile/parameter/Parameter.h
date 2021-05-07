@@ -39,9 +39,26 @@ class Parameter {
   friend void to_json(nlohmann::json &json, const std::unique_ptr<Parameter> &parameter);
 
  public:
+  enum class InvalidReason {
+    kIsValid = 0,
+    /** Missing name. */
+    kMissingName,
+    /** Home is outside of allowed values. */
+    kHomeOutOfRange,
+    /** Address is out of DMX range. */
+    kOutOfDmxRange,
+    /** Addresses overlap. */
+    kOverlappingAddresses,
+    /** One or more ranges is invalid. */
+    kInvalidRange,
+    /** Range is outside of allowed values (8-bit/16-bit). */
+    kRangeOutOfRange,
+  };
+
   [[nodiscard]] static std::unique_ptr<Parameter> CreateForType(Type type_id);
   [[nodiscard]] std::unique_ptr<Parameter> Clone();
   [[nodiscard]] std::unique_ptr<Parameter> ConvertTo(Type type_id);
+  [[nodiscard]] InvalidReason IsInvalid() const;
 
   [[nodiscard]] virtual Type GetType() const {
     return Type::kNone;

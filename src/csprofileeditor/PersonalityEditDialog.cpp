@@ -11,6 +11,7 @@
 #include "AllowedNamesItemDelegate.h"
 #include "PushButtonItemDelegate.h"
 #include "RangesEditDialog.h"
+#include "Settings.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QAction>
@@ -84,13 +85,26 @@ void PersonalityEditDialog::InitUi() {
           &QItemSelectionModel::selectionChanged,
           this,
           &PersonalityEditDialog::SSelectedTableRowChanged);
+  connect(parameter_table_model_, &RangesTableModel::dataChanged, this, &PersonalityEditDialog::SDataChanged);
+  connect(parameter_table_model_, &RangesTableModel::rowsInserted, this, &PersonalityEditDialog::SDataChanged);
+  connect(parameter_table_model_, &RangesTableModel::rowsRemoved, this, &PersonalityEditDialog::SDataChanged);
   layout->addWidget(widgets_.parameter_table);
 
+  // Errors
+  auto *actions_layout = new QHBoxLayout;
+  layout->addLayout(actions_layout);
+  widgets_.errors_label = new QLabel(this);
+  widgets_.errors_label->setPalette(Settings::GetErrorPalette());
+  actions_layout->addWidget(widgets_.errors_label);
+
   // Actions
-  auto *actions = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-  layout->addWidget(actions);
-  connect(actions, &QDialogButtonBox::accepted, this, &PersonalityEditDialog::accept);
-  connect(actions, &QDialogButtonBox::rejected, this, &PersonalityEditDialog::reject);
+  widgets_.dialog_actions = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+  actions_layout->addWidget(widgets_.dialog_actions);
+  connect(widgets_.dialog_actions, &QDialogButtonBox::accepted, this, &PersonalityEditDialog::accept);
+  connect(widgets_.dialog_actions, &QDialogButtonBox::rejected, this, &PersonalityEditDialog::reject);
+
+  // Show errors if they already exist.
+  SDataChanged();
 }
 
 bool PersonalityEditDialog::ParameterActionsAllowed() const {
@@ -153,6 +167,30 @@ void PersonalityEditDialog::SSelectedTableRowChanged() const {
   const bool parameter_actions_allowed = ParameterActionsAllowed();
   actions_.act_remove_parameter->setEnabled(parameter_actions_allowed);
   actions_.act_edit_ranges->setEnabled(parameter_actions_allowed);
+}
+
+void PersonalityEditDialog::SDataChanged() {
+  bool allow_save = true;
+  std::unordered_set<std::string> names;
+  for (const auto &parameter : personality_.parameters_) {
+    if (parameter->IsInvalid() != csprofile::parameter::Parameter::InvalidReason::kIsValid) {
+      widgets_.errors_label->setText(tr("Fix errors before saving."));
+      allow_save = false;
+      break;
+    } else if (names.find(parameter->GetName()) != names.end()) {
+      widgets_.errors_label->setText(tr("More than one parameter is called \"%1\"")
+                                         .arg(QString::fromStdString(parameter->GetName())));
+      allow_save = false;
+      break;
+    }
+    names.insert(parameter->GetName());
+  }
+
+  if (allow_save) {
+    widgets_.errors_label->clear();
+  }
+
+  widgets_.dialog_actions->button(QDialogButtonBox::Ok)->setEnabled(allow_save);
 }
 
 } // csprofileeditor

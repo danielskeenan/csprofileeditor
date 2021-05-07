@@ -49,6 +49,27 @@ std::unique_ptr<Parameter> Parameter::ConvertTo(Type type_id) {
   return new_parameter;
 }
 
+Parameter::InvalidReason Parameter::IsInvalid() const {
+  if (name_.empty()) {
+    return InvalidReason::kMissingName;
+  } else if ((!Is16Bit() && home_value_ > 255) || (Is16Bit() && home_value_ > 65535)) {
+    return InvalidReason::kHomeOutOfRange;
+  } else if (address_course_ == 0 || address_course_ > 512 || address_fine_ > 512) {
+    return InvalidReason::kOutOfDmxRange;
+  } else if (address_course_ == address_fine_) {
+    return InvalidReason::kOverlappingAddresses;
+  }
+  for (const auto &range : ranges_) {
+    if (range.IsInvalid() != Range::InvalidReason::kIsValid) {
+      return InvalidReason::kInvalidRange;
+    } else if (!Is16Bit() && range.Is16Bit()) {
+      return InvalidReason::kRangeOutOfRange;
+    }
+  }
+
+  return InvalidReason::kIsValid;
+}
+
 void from_json(const nlohmann::json &json, std::unique_ptr<Parameter> &parameter) {
   try {
     parameter = Parameter::CreateForType(static_cast<Type>(json.at("type").get<int>()));

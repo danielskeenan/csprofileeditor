@@ -133,7 +133,9 @@ void RangesEditDialog::SDataChanged() {
       allow_save = false;
       break;
     } else if (!is_16bit && range.Is16Bit()) {
-      widgets_.errors_label->setText(tr("Range does not fit in an 8-bit parameter."));
+      // This is caught and displayed in the parameter as well, but must be fixed here.
+      widgets_.errors_label->setText(tr("Range \"%1\" does not fit in an 8-bit parameter.")
+                                         .arg(QString::fromStdString(range.GetLabel())));
       allow_save = false;
       break;
     } else if (names.find(range.GetLabel()) != names.end()) {

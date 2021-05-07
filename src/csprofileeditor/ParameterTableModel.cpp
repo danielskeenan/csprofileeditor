@@ -10,6 +10,7 @@
 #include <QColor>
 #include "util.h"
 #include "EtcCsPersEditBridge.h"
+#include "Settings.h"
 
 namespace csprofileeditor {
 
@@ -94,6 +95,23 @@ QVariant ParameterTableModel::data(const QModelIndex &index, int role) const {
     if (column == Column::kName) {
       const auto &color = parameter->GetColor();
       return color.has_value() ? QColor(color.value()) : QVariant();
+    }
+  } else if (role == Qt::ForegroundRole || role == Qt::ToolTipRole) {
+    const auto invalid_reason = parameter->IsInvalid();
+    if (invalid_reason != csprofile::parameter::Parameter::InvalidReason::kIsValid) {
+      if (role == Qt::ForegroundRole) {
+        return QBrush(Settings::GetErrorColor());
+      } else {
+        switch (invalid_reason) {
+          case csprofile::parameter::Parameter::InvalidReason::kMissingName:return tr("Missing label.");
+          case csprofile::parameter::Parameter::InvalidReason::kHomeOutOfRange:return tr("Home is outside of allowed values.");
+          case csprofile::parameter::Parameter::InvalidReason::kOutOfDmxRange:return tr("Address is not acceptable DMX.");
+          case csprofile::parameter::Parameter::InvalidReason::kOverlappingAddresses:return tr("Coarse and fine addresses overlap.");
+          case csprofile::parameter::Parameter::InvalidReason::kInvalidRange:return tr("A range is invalid.");
+          case csprofile::parameter::Parameter::InvalidReason::kRangeOutOfRange:return tr("A range's value is out of the possible values.");
+          case csprofile::parameter::Parameter::InvalidReason::kIsValid:break;
+        }
+      }
     }
   }
 
