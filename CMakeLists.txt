@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 project(csprofileeditor
     VERSION 0.0.1
     DESCRIPTION "Edit fixture profiles for ETC ColorSource Console"
