@@ -10,6 +10,9 @@
 #include "csprofile/except.h"
 #include "csprofile/logging.h"
 #include "csprofile/parameter/Parameter.h"
+#include <boost/algorithm/string/case_conv.hpp>
+
+using boost::algorithm::to_upper;
 
 namespace csprofile {
 
@@ -101,11 +104,27 @@ Personality &Personality::operator=(const Personality &other) {
   return *this;
 }
 
+Personality::InvalidReason Personality::IsInvalid() const {
+  if (manufacturer_name_.empty()) {
+    return InvalidReason::kMissingManufacturerName;
+  } else if (model_name_.empty()) {
+    return InvalidReason::kMissingModelName;
+  } else if (parameters_.empty()) {
+    return InvalidReason::kNoParameters;
+  }
+  for (const auto &parameter : parameters_) {
+    if (parameter->IsInvalid() != parameter::Parameter::InvalidReason::kIsValid) {
+      return InvalidReason::kInvalidParameter;
+    }
+  }
+
+  return InvalidReason::kIsValid;
+}
+
 std::string Personality::GetDcid() const {
   // Convert to upper case to match official formatting
   std::string dcid_str = uuids::to_string(dcid_);
-  std::transform(dcid_str.begin(), dcid_str.end(), dcid_str.begin(),
-                 [](unsigned char c) { return std::toupper(c); });
+  to_upper(dcid_str);
   return dcid_str;
 }
 

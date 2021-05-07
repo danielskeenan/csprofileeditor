@@ -26,10 +26,24 @@ class Personality final {
   friend void to_json(nlohmann::json &json, const Personality &personality);
 
  public:
+  enum class InvalidReason {
+    kIsValid = 0,
+    /** Missing manufacturer name. */
+    kMissingManufacturerName,
+    /** Missing model name. */
+    kMissingModelName,
+    /** No parameters defined. */
+    kNoParameters,
+    /** One or more parameters are invalid. */
+    kInvalidParameter,
+  };
+
   explicit Personality();
   explicit Personality(const std::string &dcid);
   Personality(const Personality &other);
   Personality &operator=(const Personality &other);
+
+  [[nodiscard]] InvalidReason IsInvalid() const;
 
   [[nodiscard]] std::string GetDcid() const;
 

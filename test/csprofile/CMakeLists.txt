@@ -1,6 +1,7 @@
 add_executable(csprofile_test
     LibraryTest.cpp
     ParameterTest.cpp
+    PersonalityTest.cpp
     RangeTest.cpp
     )
 target_link_libraries(csprofile_test PRIVATE csprofile GTest::gtest_main)

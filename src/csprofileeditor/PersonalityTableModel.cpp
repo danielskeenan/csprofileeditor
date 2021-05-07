@@ -8,6 +8,7 @@
 
 #include "PersonalityTableModel.h"
 #include "util.h"
+#include "Settings.h"
 #include <utility>
 
 namespace csprofileeditor {
@@ -68,6 +69,21 @@ QVariant PersonalityTableModel::data(const QModelIndex &index, int role) const {
       return personality.GetFootprint();
     } else if (column == Column::kMode) {
       return QString::fromStdString(personality.GetModeName());
+    }
+  } else if (role == Qt::ForegroundRole || role == Qt::ToolTipRole) {
+    const auto invalid_reason = personality.IsInvalid();
+    if (invalid_reason != csprofile::Personality::InvalidReason::kIsValid) {
+      if (role == Qt::ForegroundRole) {
+        return QBrush(Settings::GetErrorColor());
+      } else {
+        switch (invalid_reason) {
+          case csprofile::Personality::InvalidReason::kMissingManufacturerName:return tr("Missing manufacturer name.");
+          case csprofile::Personality::InvalidReason::kMissingModelName:return tr("Missing model name.");
+          case csprofile::Personality::InvalidReason::kNoParameters:return tr("No parameters.");
+          case csprofile::Personality::InvalidReason::kInvalidParameter:return tr("A parameter is invalid.");
+          case csprofile::Personality::InvalidReason::kIsValid:break;
+        }
+      }
     }
   }
 
