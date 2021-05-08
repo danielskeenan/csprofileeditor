@@ -432,7 +432,7 @@ ENDDATA
 
     // Init data
     data_path_ = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
-    std::ofstream data_file(data_path_);
+    std::ofstream data_file(data_path_, std::ofstream::out | std::ofstream::binary);
     data_file.write(reinterpret_cast<const char *>(kG100Header), sizeof(kG100Header));
     data_file.write(reinterpret_cast<const char *>(kG100Image), sizeof(kG100Image));
     data_file.write(reinterpret_cast<const char *>(kG101Header), sizeof(kG101Header));
@@ -496,7 +496,7 @@ TEST_F(DiscDbTest, TestGetSeriesForManufacturer) {
   EXPECT_EQ(expected_series, disc_db.GetSeriesForManufacturer(expected_manufacturers.front()));
 }
 
-TEST_F(DiscDbTest, TestGetGelForSeries) {
+TEST_F(DiscDbTest, TestGetForSeries) {
   disc::DiscDb disc_db = CreateDb(true);
   EXPECT_FALSE(disc_db.UpToDate());
   disc_db.Update();

@@ -704,7 +704,7 @@ A78836E9-9441-4C4F-83F2-EFEDF2AEED6D,5319,effect,038900R33002.png
 
     // Init data
     data_path_ = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
-    std::ofstream data_file(data_path_);
+    std::ofstream data_file(data_path_, std::ofstream::out | std::ofstream::binary);
     data_file.write(reinterpret_cast<const char *>(kR3001Header), sizeof(kR3001Header));
     data_file.write(reinterpret_cast<const char *>(kR3001Image), sizeof(kR3001Image));
     data_file.write(reinterpret_cast<const char *>(kR3002Header), sizeof(kR3002Header));
@@ -768,7 +768,7 @@ TEST_F(EffectDbTest, TestGetSeriesForManufacturer) {
   EXPECT_EQ(expected_series, effect_db.GetSeriesForManufacturer(expected_manufacturers.front()));
 }
 
-TEST_F(EffectDbTest, TestGetGelForSeries) {
+TEST_F(EffectDbTest, TestGetForSeries) {
   effect::EffectDb effect_db = CreateDb(true);
   EXPECT_FALSE(effect_db.UpToDate());
   effect_db.Update();

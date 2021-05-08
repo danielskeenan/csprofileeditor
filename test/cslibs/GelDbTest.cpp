@@ -117,7 +117,7 @@ TEST_F(GelDbTest, TestGetSeriesForManufacturer) {
   EXPECT_EQ(expected_series, gel_db.GetSeriesForManufacturer(expected_manufacturers.front()));
 }
 
-TEST_F(GelDbTest, TestGetGelForSeries) {
+TEST_F(GelDbTest, TestGetForSeries) {
   gel::GelDb gel_db = CreateDb(true);
   ASSERT_FALSE(gel_db.UpToDate());
   gel_db.Update();

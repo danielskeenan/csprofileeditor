@@ -726,7 +726,7 @@ D40A4E71-8CB1-9A48-9D36-793290AFD829,5730,gobo,059900CS-0005.png
 
     // Init data
     data_path_ = std::filesystem::temp_directory_path() / std::tmpnam(nullptr);
-    std::ofstream data_file(data_path_);
+    std::ofstream data_file(data_path_, std::ofstream::out | std::ofstream::binary);
     data_file.write(reinterpret_cast<const char *>(kAp0004Header), sizeof(kAp0004Header));
     data_file.write(reinterpret_cast<const char *>(kAp0004Image), sizeof(kAp0004Image));
     data_file.write(reinterpret_cast<const char *>(kAp0005Header), sizeof(kAp0005Header));
@@ -790,7 +790,7 @@ TEST_F(GoboDbTest, TestGetSeriesForManufacturer) {
   EXPECT_EQ(expected_series, gobo_db.GetSeriesForManufacturer(expected_manufacturers.front()));
 }
 
-TEST_F(GoboDbTest, TestGetGelForSeries) {
+TEST_F(GoboDbTest, TestGetForSeries) {
   gobo::GoboDb gobo_db = CreateDb(true);
   ASSERT_FALSE(gobo_db.UpToDate());
   gobo_db.Update();
