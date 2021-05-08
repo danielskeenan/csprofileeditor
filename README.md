@@ -1,6 +1,8 @@
 CS Profile Editor
 =================
 
+[![CI](https://github.com/danielskeenan/csprofileeditor/actions/workflows/main.yml/badge.svg)](https://github.com/danielskeenan/csprofileeditor/actions/workflows/main.yml)
+
 Fixture profile editor for ETC ColorSource Console.
 
 This program is not sponsored by and has no affiliation with ETC. I found the official editor clunky and difficult to
