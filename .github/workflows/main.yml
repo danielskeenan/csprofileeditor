@@ -126,6 +126,12 @@ jobs:
         working-directory: ${{env.BUILD_DIR}}
         shell: bash
         run: cpack -G "TGZ;TBZ2;DEB" -B "${BUILD_DIR}/packages"
+      - name: Upload failed package artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: failed_package_${{runner.os}}
+          path: ${{env.BUILD_DIR}}/packages
       - name: Upload packages
         uses: actions/upload-artifact@v2
         with:
