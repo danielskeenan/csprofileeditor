@@ -47,6 +47,7 @@ namespace csprofileeditor {
  */
 class EtcCsPersEditBridge {
  public:
+  [[nodiscard]] static std::optional<QString> FindInstallationDirectory();
   [[nodiscard]] static bool ValidateInstallationDirectory();
   [[nodiscard]] static bool ValidateInstallationDirectory(const QDir &path);
 

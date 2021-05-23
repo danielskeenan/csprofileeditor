@@ -19,6 +19,12 @@
 #include <sqlite3.h>
 #include <filesystem>
 
+#ifdef PLATFORM_WINDOWS
+#include <Shlobj.h>
+#include <Knownfolders.h>
+#include <atlbase.h>
+#endif
+
 namespace csprofileeditor {
 
 const QStringList EtcCsPersEditBridge::kImagesDataPaths = {
@@ -45,6 +51,41 @@ const QStringList EtcCsPersEditBridge::kGobosPaths = {
     "bin/config/GOBOS.def",
     "config/GOBOS.def",
 };
+
+std::optional<QString> EtcCsPersEditBridge::FindInstallationDirectory() {
+  std::optional<QString> result;
+
+  // Can only search for installation directory on Windows because the official
+  // editor is Windows-only.
+#ifdef PLATFORM_WINDOWS
+  HRESULT hr;
+  CComPtr<IKnownFolderManager> folder_manager;
+  hr = CoCreateInstance(CLSID_KnownFolderManager, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&folder_manager));
+  if (SUCCEEDED(hr) && folder_manager != nullptr) {
+    // Search both 64-bit and 32-bit program files folders.
+    for (auto folder_id : {FOLDERID_ProgramFilesX64, FOLDERID_ProgramFilesX86}) {
+      CComPtr<IKnownFolder> folder;
+      hr = folder_manager->GetFolder(folder_id, &folder);
+      if (FAILED(hr) || folder == nullptr) {
+        // Try the next folder
+        continue;
+      }
+      CComHeapPtr<WCHAR> prog_files_path;
+      hr = folder->GetPath(KF_FLAG_NO_PACKAGE_REDIRECTION, &prog_files_path);
+      if (FAILED(hr) || prog_files_path == nullptr) {
+        continue;
+      }
+      QDir prog_files_dir(QString::fromWCharArray(prog_files_path));
+      if (prog_files_dir.exists("ETC/ETCCSPersEdit/bin/CsPersEditor.exe")) {
+        result = prog_files_dir.absoluteFilePath("ETC/ETCCSPersEdit");
+        break;
+      }
+    }
+  }
+#endif
+
+  return result;
+}
 
 bool EtcCsPersEditBridge::ValidateInstallationDirectory() {
   if (Settings::GetEtcCsPersEditorPath().isEmpty()) {

@@ -12,6 +12,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include "csprofileeditor_config.h"
 
 namespace csprofileeditor {
 
@@ -37,6 +38,9 @@ class SettingsDialog : public QDialog {
  private Q_SLOTS:
   void SEtcPersEditPathChanged() const;
   void SChooseEtcPersEditPath();
+#ifdef APP_ETC_EDITOR_DETECTABLE_PLATFORM
+  void SAutodetectEtcPersEditPath();
+#endif
 };
 
 } // csprofileeditor

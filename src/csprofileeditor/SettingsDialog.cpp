@@ -33,13 +33,30 @@ void SettingsDialog::InitUi() {
   layout->addStretch();
 
   // ETC Pers Edit path
+  auto *etcCsPersEditPath = new QHBoxLayout;
   widgets_.etcCsPersEditPath = new QLineEdit(Settings::GetEtcCsPersEditorPath(), this);
+  if (widgets_.etcCsPersEditPath->text().isEmpty()) {
+    // Search the system for the installation directory.
+    const std::optional<QString> installation_directory = EtcCsPersEditBridge::FindInstallationDirectory();
+    if (installation_directory.has_value()) {
+      widgets_.etcCsPersEditPath->setText(installation_directory.value());
+    }
+  }
   connect(widgets_.etcCsPersEditPath, &QLineEdit::textChanged, this, &SettingsDialog::SEtcPersEditPathChanged);
+  etcCsPersEditPath->addWidget(widgets_.etcCsPersEditPath);
+
+  // Browse for path
   auto *chooseEtcCsPersEditPath = new QPushButton(QIcon::fromTheme("document-open"), tr("Choose"), this);
   connect(chooseEtcCsPersEditPath, &QPushButton::clicked, this, &SettingsDialog::SChooseEtcPersEditPath);
-  auto *etcCsPersEditPath = new QHBoxLayout;
-  etcCsPersEditPath->addWidget(widgets_.etcCsPersEditPath);
   etcCsPersEditPath->addWidget(chooseEtcCsPersEditPath);
+
+  // Autodetect path
+#ifdef APP_ETC_EDITOR_DETECTABLE_PLATFORM
+  auto *autodetectEtcCsPersEditPath = new QPushButton(tr("Autodetect"), this);
+  connect(autodetectEtcCsPersEditPath, &QPushButton::clicked, this, &SettingsDialog::SAutodetectEtcPersEditPath);
+  etcCsPersEditPath->addWidget(autodetectEtcCsPersEditPath);
+#endif
+
   // Download link
   form->addRow(tr("Path to ETC ColorSource Personality Editor"), etcCsPersEditPath);
   auto *officialEditorDownloadLink =
@@ -106,5 +123,20 @@ void SettingsDialog::SChooseEtcPersEditPath() {
     widgets_.etcCsPersEditPath->setText(file_dialog->selectedFiles().first());
   }
 }
+
+#ifdef APP_ETC_EDITOR_DETECTABLE_PLATFORM
+
+void SettingsDialog::SAutodetectEtcPersEditPath() {
+  const std::optional<QString> installation_directory = EtcCsPersEditBridge::FindInstallationDirectory();
+  if (installation_directory.has_value()) {
+    widgets_.etcCsPersEditPath->setText(installation_directory.value());
+  } else {
+    QMessageBox::warning(this,
+                         tr("Cannot autodetect"),
+                         tr("The installation path cannot be found.  If the program is installed, select the path manually."));
+  }
+}
+
+#endif
 
 } // csprofileeditor

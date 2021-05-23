@@ -29,6 +29,18 @@ const auto kEtcEditorCompat = "${ETC_EDITOR_COMPAT}";
 /** "CSPE" */
 const auto kApplicationId = 0x43535045;
 
+#if defined(PLATFORM_WINDOWS)
+/**
+ * The official editor can be autodetected on this platform.
+ *
+ * This is a separate define in case the editor is available on multiple
+ * platforms in the future.
+ */
+#define APP_ETC_EDITOR_DETECTABLE_PLATFORM
+#else
+#undef APP_ETC_EDITOR_DETECTABLE_PLATFORM
+#endif
+
 } // csprofileeditor
 
 #endif //CS_PROFILE_EDITOR_SRC_CONFIG_H_
