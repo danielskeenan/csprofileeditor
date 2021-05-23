@@ -221,7 +221,7 @@ unsigned long DefsFile::GetSize() {
   if (!size_.has_value()) {
     const auto old_pos = file_stream_.tellg();
     file_stream_.seekg(0, std::ifstream::end);
-    size_ = file_stream_.tellg();
+    size_ = static_cast<unsigned long>(file_stream_.tellg());
     file_stream_.seekg(old_pos);
   }
   return *size_;
