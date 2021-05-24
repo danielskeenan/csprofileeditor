@@ -23,6 +23,7 @@
 #include <Shlobj.h>
 #include <Knownfolders.h>
 #include <atlbase.h>
+
 #endif
 
 namespace csprofileeditor {
@@ -75,9 +76,9 @@ std::optional<QString> EtcCsPersEditBridge::FindInstallationDirectory() {
       if (FAILED(hr) || prog_files_path == nullptr) {
         continue;
       }
-      QDir prog_files_dir(QString::fromWCharArray(prog_files_path));
-      if (prog_files_dir.exists("ETC/ETCCSPersEdit/bin/CsPersEditor.exe")) {
-        result = prog_files_dir.absoluteFilePath("ETC/ETCCSPersEdit");
+      QDir check_path(QString::fromWCharArray(prog_files_path));
+      if (check_path.cd("ETC/ETCCSPersEdit") && ValidateInstallationDirectory(check_path)) {
+        result = check_path.absolutePath();
         break;
       }
     }
